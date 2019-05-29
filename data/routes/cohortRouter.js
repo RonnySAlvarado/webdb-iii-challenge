@@ -43,4 +43,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleteCohort = await db("cohorts")
+      .where({ id: req.params.id })
+      .del();
+    if (deleteCohort) {
+      res.status(200).json(deleteCohort);
+    } else {
+      res
+        .status(400)
+        .json({ message: "Cohort with specified ID does not exist." });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "Something went wrong with this request (attempt to delete by ID"
+    });
+  }
+});
+
 module.exports = router;
