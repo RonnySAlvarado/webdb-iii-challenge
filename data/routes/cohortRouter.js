@@ -32,7 +32,7 @@ router.get("/:id", async (req, res) => {
       res.status(200).json(getCohort);
     } else {
       res
-        .status(400)
+        .status(404)
         .json({ message: "Cohort with specified ID does not exist." });
     }
   } catch (err) {
@@ -52,13 +52,50 @@ router.delete("/:id", async (req, res) => {
       res.status(200).json(deleteCohort);
     } else {
       res
-        .status(400)
+        .status(404)
         .json({ message: "Cohort with specified ID does not exist." });
     }
   } catch (err) {
     res.status(500).json({
       message: "Something went wrong with this request (attempt to delete by ID"
     });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const updateCohort = await db("cohorts")
+      .where({ id: req.params.id })
+      .update(req.body);
+    if (updateCohort) {
+      res.status(200).json(updateCohort);
+    } else {
+      res
+        .status(404)
+        .json({ message: "Cohort with specified ID does not exist. " });
+    }
+  } catch (err) {
+    res.status(500).json({
+      message:
+        "Something went wrong with this request (attempt to update information)"
+    });
+  }
+});
+
+router.get("/:id/students", async (req, res) => {
+  try {
+    const getStudents = await db("students").where({
+      cohort_id: req.params.id
+    });
+    if (getStudents) {
+      res.status(200).json(getStudents);
+    } else {
+      res
+        .status(404)
+        .json({ message: "Cohort with specified ID does not exist." });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong with this request" });
   }
 });
 
